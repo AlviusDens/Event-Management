@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin M!VENT')</title>
+    <meta name="description" content="M!VENT Admin Panel">
+    <title>@yield('title', 'Admin — M!VENT')</title>
     @vite(['resources/css/admin.css', 'resources/js/app.js'])
 </head>
-
 <body>
-
     <header>
         @include('partials.navbar_admin')
     </header>
@@ -34,10 +32,8 @@
         @yield('content')
     </main>
 
-    <footer style="text-align: center; padding: 20px; color: #777; margin-top: 40px; font-size: 13px;">
-        &copy; 2026 Event Management
+    <footer class="admin-footer">
+        <p>&copy; 2026 M!VENT &mdash; Admin Panel</p>
     </footer>
-
 </body>
-
 </html>

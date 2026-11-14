@@ -1,7 +1,5 @@
 <nav>
-    <div class="logo">
-        Event Management
-    </div>
+    <div class="logo">M!VENT</div>
 
     <div class="admin-area">
         <span class="admin-name">
@@ -10,35 +8,34 @@
 
         <a href="{{ route('admin.dashboard') }}">Dashboard</a>
         <a href="{{ route('admin.kyc.index') }}">Pemeriksaan KYC</a>
+        <a href="{{ route('admin.event-verification.index') }}">Verifikasi Event</a>
 
-        <!-- Tombol Logout -->
         <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
             @csrf
         </form>
 
-        <button type="button" onclick="confirmLogout()" class="btn btn-danger">
+        <button type="button" onclick="confirmAdminLogout()" class="btn btn-dark">
             Logout
         </button>
-
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            function confirmLogout() {
-                Swal.fire({
-                    title: 'Konfirmasi Logout',
-                    text: "Apakah Anda yakin ingin keluar dari sistem?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Iya, Keluar',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        document.getElementById('logout-form').submit();
-                    } else {
-                    }
-                })
-            }
-        </script>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmAdminLogout() {
+            Swal.fire({
+                title: 'Konfirmasi Logout',
+                text: "Apakah Anda yakin ingin keluar?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#38BDF8',
+                cancelButtonColor: '#94A3B8',
+                confirmButtonText: 'Ya, Keluar',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('logout-form').submit();
+                }
+            });
+        }
+    </script>
 </nav>

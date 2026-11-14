@@ -30,7 +30,6 @@ class AdminAuthController extends Controller
         // Memeriksa email dan password admin
         $user = User::where('email', $request->email)
             ->where('role', 'admin')
-            ->where('status', 'verified')
             ->first();
 
         // Memeriksa akun dan password

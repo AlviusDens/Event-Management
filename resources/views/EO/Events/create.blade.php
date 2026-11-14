@@ -1,19 +1,19 @@
 @extends('layouts.eo')
 
-@section('title', 'Buat Event Baru - M!VENT')
+@section('title', 'Buat Event Baru — M!VENT')
 
 @section('content')
 <div class="form-container-wide">
 
-    <div class="page-title" style="margin-bottom: 25px;">
-        <h1 style="font-size: 26px; font-weight: 800; margin-bottom: 24px;">Buat Event Baru</h1>
-        <p style="color: #73778b;">Isi informasi event dan atur tiket sebelum diajukan ke admin.</p>
+    <div class="page-title" style="margin-bottom: 28px;">
+        <h1 style="font-size: 28px; font-weight: 800; color: #0F172A; margin-bottom: 6px;">Buat Event Baru</h1>
+        <p style="color: #64748B; font-size: 15px;">Lengkapi informasi event dan tentukan jenis tiket sebelum diajukan untuk verifikasi.</p>
     </div>
 
     @if ($errors->any())
-    <div class="alert alert-error" style="background: #fff0f0; color: #a52525; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <div class="alert alert-error">
         <strong>Periksa kembali data berikut:</strong>
-        <ul>
+        <ul style="margin-top: 6px; padding-left: 18px; list-style: disc;">
             @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
             @endforeach
@@ -22,7 +22,7 @@
     @endif
 
     @if (session('success'))
-    <div class="alert alert-success" style="background: #eaf8ee; color: #246b39; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <div class="alert alert-success">
         {{ session('success') }}
     </div>
     @endif
@@ -31,17 +31,17 @@
         @csrf
 
         <!-- 1. INFORMASI EVENT -->
-        <section class="card" style="background: white; padding: 25px; border-radius: 12px; margin-bottom: 22px; box-shadow: 0 3px 12px rgba(0,0,0,0.04);">
-            <h3 style="margin-top: 0; padding-bottom: 14px; border-bottom: 1px solid #eeeef4;">1. Informasi Event</h3>
+        <section class="form-section-card">
+            <h3 class="form-section-title">1. Informasi Event</h3>
 
-            <div class="form-group" style="margin-bottom: 18px;">
-                <label for="title" style="display: block; font-weight: bold; margin-bottom: 8px;">Nama Event *</label>
-                <input type="text" id="title" name="title" value="{{ old('title') }}" placeholder="Contoh: E-Fest 2027" style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px;" required>
+            <div class="form-group">
+                <label for="title">Nama Event *</label>
+                <input type="text" id="title" name="title" value="{{ old('title') }}" placeholder="Contoh: Sound of Summer 2026" required>
             </div>
 
-            <div class="form-group" style="margin-bottom: 18px;">
-                <label for="category_id" style="display: block; font-weight: bold; margin-bottom: 8px;">Kategori Event *</label>
-                <select id="category_id" name="category_id" style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px;" required>
+            <div class="form-group">
+                <label for="category_id">Kategori Event *</label>
+                <select id="category_id" name="category_id" required>
                     <option value="">-- Pilih Kategori --</option>
                     @foreach ($categories as $category)
                     <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
@@ -51,102 +51,100 @@
                 </select>
             </div>
 
-            <div class="form-group" style="margin-bottom: 18px;">
-                <label for="description" style="display: block; font-weight: bold; margin-bottom: 8px;">Deskripsi Event *</label>
-                <textarea id="description" name="description" placeholder="Jelaskan informasi dan kegiatan event..." style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px; min-height: 110px;" required>{{ old('description') }}</textarea>
+            <div class="form-group">
+                <label for="description">Deskripsi Event *</label>
+                <textarea id="description" name="description" placeholder="Jelaskan detail acara, line-up artis, dan informasi penting lainnya..." required>{{ old('description') }}</textarea>
             </div>
 
-            <div class="form-group" style="margin-bottom: 18px;">
-                <label for="banner_image" style="display: block; font-weight: bold; margin-bottom: 8px;">Banner Event *</label>
-                <input type="file" id="banner_image" name="banner_image" accept=".jpg,.jpeg,.png" style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px;" required>
-                <p style="color: #777b8d; font-size: 12px; margin-top: 6px;">Format JPG, JPEG, atau PNG. Maksimal 2 MB.</p>
+            <div class="form-group">
+                <label for="banner_image">Banner Event *</label>
+                <input type="file" id="banner_image" name="banner_image" accept=".jpg,.jpeg,.png" required>
+                <p style="color: #94A3B8; font-size: 12px; margin-top: 6px;">Format file: JPG, JPEG, atau PNG. Ukuran maksimal 2 MB.</p>
             </div>
         </section>
 
         <!-- 2. LOKASI EVENT -->
-        <section class="card" style="background: white; padding: 25px; border-radius: 12px; margin-bottom: 22px; box-shadow: 0 3px 12px rgba(0,0,0,0.04);">
-            <h3 style="margin-top: 0; padding-bottom: 14px; border-bottom: 1px solid #eeeef4;">2. Lokasi Event</h3>
+        <section class="form-section-card">
+            <h3 class="form-section-title">2. Lokasi Event</h3>
 
-            <div class="form-group" style="margin-bottom: 18px;">
-                <label for="venue_name" style="display: block; font-weight: bold; margin-bottom: 8px;">Nama Tempat *</label>
-                <input type="text" id="venue_name" name="venue_name" value="{{ old('venue_name') }}" placeholder="Contoh: Gedung Serbaguna" style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px;" required>
+            <div class="form-group">
+                <label for="venue_name">Nama Tempat / Venue *</label>
+                <input type="text" id="venue_name" name="venue_name" value="{{ old('venue_name') }}" placeholder="Contoh: Stadion Utama Gelora Bung Karno" required>
             </div>
 
-            <div class="form-group" style="margin-bottom: 18px;">
-                <label for="city" style="display: block; font-weight: bold; margin-bottom: 8px;">Kota *</label>
-                <input type="text" id="city" name="city" value="{{ old('city') }}" placeholder="Contoh: Jember" style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px;" required>
+            <div class="form-group">
+                <label for="city">Kota *</label>
+                <input type="text" id="city" name="city" value="{{ old('city') }}" placeholder="Contoh: Jakarta Pusat" required>
             </div>
 
-            <div class="form-group" style="margin-bottom: 18px;">
-                <label for="address" style="display: block; font-weight: bold; margin-bottom: 8px;">Alamat Lengkap *</label>
-                <textarea id="address" name="address" placeholder="Masukkan alamat lengkap lokasi event" style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px;" required>{{ old('address') }}</textarea>
+            <div class="form-group">
+                <label for="address">Alamat Lengkap *</label>
+                <textarea id="address" name="address" placeholder="Tuliskan alamat lengkap beserta patokan lokasi..." required>{{ old('address') }}</textarea>
             </div>
         </section>
 
         <!-- 3. WAKTU -->
-        <section class="card" style="background: white; padding: 25px; border-radius: 12px; margin-bottom: 22px; box-shadow: 0 3px 12px rgba(0,0,0,0.04);">
-            <h3 style="margin-top: 0; padding-bottom: 14px; border-bottom: 1px solid #eeeef4;">3. Jadwal Event</h3>
+        <section class="form-section-card">
+            <h3 class="form-section-title">3. Jadwal Event</h3>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
-                <div class="form-group" style="margin-bottom: 18px;">
-                    <label for="start_time" style="display: block; font-weight: bold; margin-bottom: 8px;">Waktu Mulai *</label>
-                    <input type="datetime-local" id="start_time" name="start_time" value="{{ old('start_time') }}" style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px;" required>
+                <div class="form-group">
+                    <label for="start_time">Waktu Mulai *</label>
+                    <input type="datetime-local" id="start_time" name="start_time" value="{{ old('start_time') }}" required>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 18px;">
-                    <label for="end_time" style="display: block; font-weight: bold; margin-bottom: 8px;">Waktu Selesai *</label>
-                    <input type="datetime-local" id="end_time" name="end_time" value="{{ old('end_time') }}" style="width: 100%; padding: 12px; border: 1px solid #d9dbea; border-radius: 7px;" required>
+                <div class="form-group">
+                    <label for="end_time">Waktu Selesai *</label>
+                    <input type="datetime-local" id="end_time" name="end_time" value="{{ old('end_time') }}" required>
                 </div>
             </div>
         </section>
 
         <!-- 4. TIKET DAN KUOTA -->
-        <section>
-            <div class="form-section-card">
-                <h3 class="form-section-title">4. Jenis Tiket dan Kuota</h3>
+        <section class="form-section-card">
+            <h3 class="form-section-title">4. Jenis Tiket dan Kuota</h3>
 
-                <div id="ticket-container" data-initial-count="{{ count(old('tickets', [])) > 0 ? count(old('tickets', [])) : 1 }}">
-                    <div class="ticket-card-item">
-                        <div class="ticket-header">
-                            <span class="ticket-title">Jenis Tiket #1</span>
+            <div id="ticket-container" data-initial-count="{{ count(old('tickets', [])) > 0 ? count(old('tickets', [])) : 1 }}">
+                <div class="ticket-card-item">
+                    <div class="ticket-header">
+                        <span class="ticket-title">Jenis Tiket #1</span>
+                    </div>
+
+                    <div class="ticket-form-grid">
+                        <div class="form-group">
+                            <label>Nama Tiket <span style="color:#EF4444;">*</span></label>
+                            <input type="text" name="tickets[0][name]" placeholder="Contoh: Early Bird / Presale / VIP" required>
                         </div>
 
-                        <div class="ticket-form-grid">
-                            <div class="form-group">
-                                <label>Nama Tiket <span style="color:red;">*</span></label>
-                                <input type="text" name="tickets[0][name]" placeholder="Contoh: Reguler / VIP" required>
-                            </div>
+                        <div class="form-group">
+                            <label>Harga Tiket (Rp) <span style="color:#EF4444;">*</span></label>
+                            <input type="number" name="tickets[0][price]" placeholder="0 jika Gratis" min="0" required>
+                        </div>
 
-                            <div class="form-group">
-                                <label>Harga Tiket (Rp) <span style="color:red;">*</span></label>
-                                <input type="number" name="tickets[0][price]" placeholder="0 jika Gratis" min="0" required>
-                            </div>
+                        <div class="form-group">
+                            <label>Kuota Tiket <span style="color:#EF4444;">*</span></label>
+                            <input type="number" name="tickets[0][quota]" placeholder="Contoh: 100" min="1" required>
+                        </div>
 
-                            <div class="form-group">
-                                <label>Kuota Tiket <span style="color:red;">*</span></label>
-                                <input type="number" name="tickets[0][quota]" placeholder="Contoh: 100" min="1" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Maksimal Tiket / Transaksi <span style="color:red;">*</span></label>
-                                <input type="number" name="tickets[0][max_per_order]" value="5" min="1" required>
-                            </div>
+                        <div class="form-group">
+                            <label>Maksimal Tiket / Transaksi <span style="color:#EF4444;">*</span></label>
+                            <input type="number" name="tickets[0][max_per_order]" value="5" min="1" required>
                         </div>
                     </div>
                 </div>
-
-                <button type="button" class="btn-add-ticket" id="add-ticket">
-                    + Tambah Jenis Tiket
-                </button>
             </div>
+
+            <button type="button" class="btn-add-ticket" id="add-ticket">
+                + Tambah Jenis Tiket
+            </button>
         </section>
 
-        <!-- TOMBOL -->
-        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 40px;">
-            <a href="{{ route('eo.events.index') }}" class="btn btn-secondary" style="background: #ecebff; color: #5148c7; padding: 12px 18px; border-radius: 7px; text-decoration: none; font-weight: bold;">
+        <!-- TOMBOL AKSI -->
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 32px; margin-bottom: 20px;">
+            <a href="{{ route('eo.events.index') }}" class="btn" style="background: #F1F5F9; color: #475569; padding: 12px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; border: 1px solid #E2E8F0;">
                 Batal
             </a>
-            <button type="submit" class="btn btn-primary" style="background: #635bdb; color: white; border: none; padding: 12px 18px; border-radius: 7px; font-weight: bold; cursor: pointer;">
+            <button type="submit" class="btn" style="background: #38BDF8; color: #0C4A6E; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; width: auto;">
                 Simpan & Ajukan Event
             </button>
         </div>
@@ -159,7 +157,6 @@
         const container = document.getElementById('ticket-container');
         const addButton = document.getElementById('add-ticket');
 
-        // Membaca jumlah tiket dari atribut HTML (aman dari format error VS Code)
         let ticketIndex = parseInt(container.getAttribute('data-initial-count')) || 1;
 
         window.updateTicketNumbers = function() {
@@ -205,22 +202,22 @@
 
                     <div class="ticket-form-grid">
                         <div class="form-group">
-                            <label>Nama Tiket <span style="color:red;">*</span></label>
+                            <label>Nama Tiket <span style="color:#EF4444;">*</span></label>
                             <input type="text" name="tickets[${ticketIndex}][name]" placeholder="Contoh: Reguler / VIP" required>
                         </div>
 
                         <div class="form-group">
-                            <label>Harga Tiket (Rp) <span style="color:red;">*</span></label>
+                            <label>Harga Tiket (Rp) <span style="color:#EF4444;">*</span></label>
                             <input type="number" name="tickets[${ticketIndex}][price]" placeholder="0 jika Gratis" min="0" required>
                         </div>
 
                         <div class="form-group">
-                            <label>Kuota Tiket <span style="color:red;">*</span></label>
+                            <label>Kuota Tiket <span style="color:#EF4444;">*</span></label>
                             <input type="number" name="tickets[${ticketIndex}][quota]" placeholder="Contoh: 100" min="1" required>
                         </div>
 
                         <div class="form-group">
-                            <label>Maksimal Tiket / Transaksi <span style="color:red;">*</span></label>
+                            <label>Maksimal Tiket / Transaksi <span style="color:#EF4444;">*</span></label>
                             <input type="number" name="tickets[${ticketIndex}][max_per_order]" value="5" min="1" required>
                         </div>
                     </div>

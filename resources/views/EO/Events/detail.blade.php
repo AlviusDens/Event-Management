@@ -1,71 +1,113 @@
 @extends('layouts.eo')
 
-@section('title', 'Detail Event - ' . $event->title)
+@section('title', 'Detail Event — ' . $event->title)
 
 @section('content')
-<div class="container" style="max-width: 1000px; margin: 20px auto;">
-    <a href="{{ route('eo.events.index') }}" class="btn btn-secondary" style="background: #ecebff; color: #5148c7; padding: 8px 16px; border-radius: 6px; text-decoration: none; display: inline-block; margin-bottom: 20px; font-weight: bold;">
-        ← Kembali ke Daftar Event
-    </a>
+<div class="detail-page-wrapper">
+    <div class="detail-container">
+        <!-- Tombol Kembali -->
+        <a href="{{ route('eo.events.index') }}" class="btn-back">
+            ← Kembali ke Daftar Event
+        </a>
 
-    <div class="card" style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.04); margin-bottom: 25px;">
-        @if ($event->banner_image)
-            <img
-                src="{{ asset('storage/' . $event->banner_image) }}"
-                alt="{{ $event->title }}"
-                style="width: 100%; max-height: 400px; object-fit: cover;"
-            >
-        @endif
-
-        <div style="padding: 25px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                @if ($category)
-                    <span style="background: #ecebff; color: #5148c7; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 13px;">
-                        {{ $category->name }}
-                    </span>
-                @endif
-
-                <span class="status status-{{ $event->status }}" style="padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; background: #fff3d8; color: #946200;">
-                    Status: {{ ucfirst($event->status) }}
-                </span>
+        <!-- Card Utama Event -->
+        <div class="event-hero-card">
+            @if ($event->banner_image)
+            <div class="banner-wrapper">
+                <img src="{{ asset('storage/' . $event->banner_image) }}" alt="{{ $event->title }}" class="banner-img" loading="lazy">
             </div>
+            @endif
 
-            <h1 style="margin-top: 10px; margin-bottom: 15px;">{{ $event->title }}</h1>
+            <div class="event-hero-body">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                    @if ($category)
+                    <span class="category-badge">{{ $category->name }}</span>
+                    @endif
 
-            <p style="color: #555; line-height: 1.6;">{{ $event->description }}</p>
+                    @php
+                        $status = strtolower($event->status ?? 'draft');
+                        $statusClass = match ($status) {
+                            'published' => 'status-published',
+                            'pending'   => 'status-pending',
+                            'rejected', 'cancelled' => 'status-rejected',
+                            default     => 'status-draft',
+                        };
+                    @endphp
+                    <span class="event-status {{ $statusClass }}">
+                        Status: {{ ucfirst($status) }}
+                    </span>
+                </div>
 
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <h1 class="event-title">{{ $event->title }}</h1>
+                <p class="event-description">{{ $event->description }}</p>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; color: #333;">
-                <p><strong>Waktu Mulai:</strong> {{ \Carbon\Carbon::parse($event->start_time)->format('d M Y, H:i') }}</p>
-                <p><strong>Waktu Selesai:</strong> {{ \Carbon\Carbon::parse($event->end_time)->format('d M Y, H:i') }}</p>
-                <p><strong>Lokasi Tempat:</strong> {{ $event->venue_name }}, {{ $event->city }}</p>
-                <p><strong>Alamat Lengkap:</strong> {{ $event->address }}</p>
+                <div class="event-meta-grid">
+                    <div class="meta-item">
+                        <div class="meta-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <div>
+                            <span class="meta-label">Waktu Mulai</span>
+                            <strong class="meta-value">{{ \Carbon\Carbon::parse($event->start_time)->format('d M Y, H:i') }} WIB</strong>
+                        </div>
+                    </div>
+
+                    <div class="meta-item">
+                        <div class="meta-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <div>
+                            <span class="meta-label">Waktu Selesai</span>
+                            <strong class="meta-value">{{ \Carbon\Carbon::parse($event->end_time)->format('d M Y, H:i') }} WIB</strong>
+                        </div>
+                    </div>
+
+                    <div class="meta-item meta-full">
+                        <div class="meta-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div>
+                            <span class="meta-label">Lokasi Tempat</span>
+                            <strong class="meta-value">{{ $event->venue_name }}, {{ $event->city }}</strong>
+                            <span class="meta-label" style="margin-top: 4px; display: block;">{{ $event->address }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Tiket -->
+        <div class="tickets-section">
+            <h2 class="section-title">Pilihan Tiket & Kuota</h2>
+
+            <div class="tickets-grid">
+                @forelse ($tickets as $ticket)
+                <div class="ticket-card">
+                    <div class="ticket-info">
+                        <h3 class="ticket-name">{{ $ticket->name }}</h3>
+                        <p class="ticket-quota">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Kuota: {{ $ticket->quota }} tiket &nbsp;|&nbsp; Terjual: {{ $ticket->sold_quota ?? 0 }} tiket
+                        </p>
+                    </div>
+
+                    <div class="ticket-action">
+                        <span class="ticket-price">
+                            @if ($ticket->price > 0)
+                                Rp {{ number_format($ticket->price, 0, ',', '.') }}
+                            @else
+                                Gratis
+                            @endif
+                        </span>
+                    </div>
+                </div>
+                @empty
+                <div class="empty-tickets">
+                    <p>Belum ada jenis tiket yang dibuat untuk event ini.</p>
+                </div>
+                @endforelse
             </div>
         </div>
     </div>
-
-    <h2 style="margin-bottom: 18px;">Pilihan Tiket & Kuota</h2>
-
-    @forelse ($tickets as $ticket)
-        <div style="background: white; border-radius: 10px; padding: 18px 25px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-            <div>
-                <h4 style="margin: 0 0 6px 0;">{{ $ticket->name }}</h4>
-                <p style="margin: 0; color: #777b8d; font-size: 14px;">
-                    Kuota: {{ $ticket->quota }} tiket | Terjual: {{ $ticket->sold_quota ?? 0 }} tiket
-                </p>
-            </div>
-
-            <h4 style="margin: 0; color: #635bdb;">
-                @if ($ticket->price > 0)
-                    Rp {{ number_format($ticket->price, 0, ',', '.') }}
-                @else
-                    Gratis
-                @endif
-            </h4>
-        </div>
-    @empty
-        <p style="color: #777b8d;">Belum ada jenis tiket yang dibuat untuk event ini.</p>
-    @endforelse
 </div>
 @endsection

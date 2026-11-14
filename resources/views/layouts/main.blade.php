@@ -1,19 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="desription" content="..." />
-    <meta name="author" content="Denis" />
-    <meta name="keywords" content="..." />
-    <!-- <link rel="icon" href=""> -->
-    <title>@yield('title', 'M!VENT')</title>
+    <meta name="description" content="M!VENT - Temukan dan beli tiket event terbaik" />
+    <meta name="author" content="M!VENT Team" />
+    <title>@yield('title', 'M!VENT — Temukan Event Terbaik')</title>
     @vite(['resources/css/style.css'])
 </head>
-
 <body>
-
     <header>
         @include('partials.navbar')
     </header>
@@ -23,17 +18,20 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 Event Management System</p>
-
-        <!-- Tautan tersembunyi / khusus untuk login admin -->
-        <p style="margin-top: 10px;">
-            <a href="{{ route('admin.login') }}" style="color: #888; font-size: 12px; text-decoration: none;">
-                Admin Portal
-            </a>
-        </p>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span class="footer-logo">M!VENT</span>
+                <p>Platform tiket event terpercaya di Indonesia.</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 M!VENT. All rights reserved.</p>
+                <a href="{{ route('admin.login') }}" class="footer-admin-link">Admin Portal</a>
+            </div>
+        </div>
     </footer>
 
     <script>
+        // Navbar scroll effect
         window.addEventListener('scroll', function() {
             const navbar = document.getElementById('navbar');
             if (window.scrollY > 40) {
@@ -42,10 +40,15 @@
                 navbar.classList.remove('scrolled');
             }
         });
+
+        // Hamburger menu toggle
+        document.getElementById('hamburger-btn')?.addEventListener('click', function() {
+            document.querySelector('.menu')?.classList.toggle('menu-open');
+            const icon = this.querySelector('.hamburger-icon');
+            if (icon) icon.textContent = document.querySelector('.menu')?.classList.contains('menu-open') ? '✕' : '☰';
+        });
     </script>
 
-    {{-- PERBAIKAN: Wajib ditambahkan agar @push('scripts') dari halaman checkout bisa dirender --}}
     @stack('scripts')
 </body>
-
 </html>

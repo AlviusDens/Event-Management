@@ -140,7 +140,7 @@
 
             <div class="summary-total-row">
                 <span>Total Bayar</span>
-                <strong id="checkout-total-price" style="color: #2563eb;">Rp 0</strong>
+                <strong id="checkout-total-price" style="color: #38BDF8;">Rp 0</strong>
             </div>
 
             <button
