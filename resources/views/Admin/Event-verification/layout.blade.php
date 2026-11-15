@@ -8,7 +8,7 @@
 </head>
 <body>
     <header>
-        @include('partials.navbar_admin')
+        @include('partials.sidebar_admin')
     </header>
 
     <main class="container">
