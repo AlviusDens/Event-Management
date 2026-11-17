@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,7 +59,8 @@
         }
 
         /* Notches for authentic ticket look */
-        .ticket-top::before, .ticket-top::after {
+        .ticket-top::before,
+        .ticket-top::after {
             content: '';
             position: absolute;
             bottom: -14px;
@@ -68,8 +70,14 @@
             border-radius: 50%;
             z-index: 2;
         }
-        .ticket-top::before { left: -14px; }
-        .ticket-top::after { right: -14px; }
+
+        .ticket-top::before {
+            left: -14px;
+        }
+
+        .ticket-top::after {
+            right: -14px;
+        }
 
         .brand-badge {
             font-size: 13px;
@@ -216,9 +224,11 @@
                 background: #FFFFFF;
                 padding: 0;
             }
+
             .action-buttons {
                 display: none !important;
             }
+
             .ticket-card {
                 box-shadow: none;
                 border: 1px solid #CBD5E1;
@@ -226,6 +236,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="ticket-wrapper">
@@ -233,17 +244,27 @@
             <div class="ticket-top">
                 <span class="brand-badge">M!VENT Official E-Ticket</span>
                 <h1 class="ticket-title">{{ $order->event_title }}</h1>
+                @foreach ($e_tickets as $index => $ticket)
+                    <div class="qr-section" style="display: block; margin: 14px auto; max-width: 240px;">
+                        <div
+                            style="font-size: 11px; font-weight: 700; color: #64748B; margin-bottom: 8px; text-transform: uppercase;">
+                            Tiket #{{ $index + 1 }} • {{ strtoupper($ticket->status ?? 'VALID') }}
+                        </div>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ $ticket->ticket_code }}"
+                            alt="QR Code Tiket {{ $ticket->ticket_code }}">
+                        <div class="order-code">{{ $ticket->ticket_code }}</div>
+                    </div>
+                @endforeach
+                <br>
                 <div class="status-badge">
                     <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd" />
                     </svg>
                     STATUS: {{ strtoupper($order->status) }}
                 </div>
 
-                <div class="qr-section">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ $order->order_code }}" alt="QR Code Tiket">
-                    <div class="order-code">{{ $order->order_code }}</div>
-                </div>
             </div>
 
             <div class="ticket-bottom">
@@ -254,7 +275,8 @@
 
                 <div class="info-group">
                     <div class="info-label">Jadwal & Waktu</div>
-                    <div class="info-value">{{ \Carbon\Carbon::parse($order->start_time)->translatedFormat('l, d F Y - H:i') }} WIB</div>
+                    <div class="info-value">
+                        {{ \Carbon\Carbon::parse($order->start_time)->translatedFormat('l, d F Y - H:i') }} WIB</div>
                 </div>
 
                 <div class="info-group">
@@ -280,7 +302,9 @@
                     </a>
                     <button onclick="window.print()" class="btn btn-primary">
                         <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd"
+                                d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z"
+                                clip-rule="evenodd" />
                         </svg>
                         Cetak / Simpan PDF
                     </button>
@@ -290,4 +314,5 @@
     </div>
 
 </body>
+
 </html>

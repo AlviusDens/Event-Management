@@ -1,10 +1,115 @@
-@extends('layouts.eo')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('title', 'Scan Tiket Panitia')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Tiket Panitia - M!VENT</title>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+    <style>
+        :root {
+            --bg-color: #F8FAFC;
+            --primary: #38BDF8;
+            --primary-dark: #0EA5E9;
+            --text-dark: #0F172A;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+        }
 
-@section('content')
-    <div style="max-width: 600px; margin: 20px auto; padding: 20px;">
-        <h2 style="margin-bottom: 5px;">Scan Tiket Masuk Event</h2>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #FFFFFF;
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+            text-decoration: none;
+        }
+
+        .brand-logo span {
+            color: var(--primary-dark);
+        }
+
+        .user-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            background: #F1F5F9;
+            padding: 6px 12px;
+            border-radius: 9999px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: #FFFFFF;
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background: #F1F5F9;
+            border-color: #CBD5E1;
+        }
+
+        #reader video {
+            transform: scaleX(-1) !important;
+            -webkit-transform: scaleX(-1) !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR ATAS (TANPA SIDEBAR) -->
+    <nav class="navbar">
+        <a href="{{ url('/panitia/dashboard') }}" class="brand-logo">M<span>!</span>VENT</a>
+        <div class="user-tag">
+            <span
+                style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
+            {{ auth()->user()->name ?? 'Panitia Event' }} (Panitia)
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <a href="{{ url('/panitia/dashboard') }}" class="btn-back">
+                    Kembali
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div style="max-width: 600px; margin: 24px auto; padding: 0 20px 40px;">
+
+        <h2 style="margin-bottom: 5px; font-size: 22px;">Scan Tiket Masuk Event</h2>
         <p style="color: #64748b; margin-bottom: 20px; font-size: 14px;">
             Gunakan input manual di bawah atau nyalakan kamera untuk scan QR code.
         </p>
@@ -125,6 +230,11 @@
                 $('#camera-status').hide();
                 $('#btn-start-cam').hide();
                 $('#btn-stop-cam').show();
+
+                const videoEl = document.querySelector('#reader video');
+                if (videoEl) {
+                    videoEl.style.setProperty('transform', 'scaleX(-1)', 'important');
+                }
             }).catch((err) => {
                 isScanning = false;
                 $('#camera-status').html(
@@ -161,4 +271,6 @@
             }
         });
     </script>
-@endsection
+</body>
+
+</html>

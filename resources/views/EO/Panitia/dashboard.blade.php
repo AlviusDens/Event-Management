@@ -223,7 +223,7 @@
                     <h3 class="action-title">Scan Tiket Peserta</h3>
                     <p class="action-desc">Validasi kehadiran peserta event di pintu masuk (gate) menggunakan scanner kamera atau kode order.</p>
                 </div>
-                <button type="button" class="btn-action btn-cyan" onclick="alert('Fitur scanner tiket siap digunakan di pintu masuk.')">
+                <button type="button" class="btn-action btn-cyan" onclick="window.location.href='{{ route('panitia.scan.index') }}'">
                     Buka Scanner QR
                 </button>
             </div>
