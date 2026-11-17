@@ -9,11 +9,13 @@ use App\Http\Controllers\EO\EOKycController;
 use App\Http\Controllers\EO\EODashboardController;
 use App\Http\Controllers\EO\EventController;
 use App\Http\Controllers\EO\EoReportController;
+use App\Http\Controllers\EO\PayoutController;
 
 // Panitia Controllers
 use App\Http\Controllers\Panitia\PanitiaAuthController;
 use App\Http\Controllers\Panitia\PanitiaController;
 use App\Http\Controllers\Panitia\PanitiaDashboardController;
+use App\Http\Controllers\Panitia\PanitiaScanController;
 
 // Admin Controllers
 use App\Http\Controllers\Admin\AdminAuthController;
@@ -63,6 +65,10 @@ Route::group([], function () {
     Route::get('/eo/reports', [EoReportController::class, 'index'])->name('eo.reports.index');
     Route::get('/eo/events/{id}/report', [EoReportController::class, 'salesReport'])->name('eo.reports.sales');
 
+    // Payout EO
+    Route::get('/eo/payout', [PayoutController::class, 'index'])->name('eo.payout.index');
+    Route::post('/eo/payout/store', [PayoutController::class, 'store'])->name('eo.payout.store');
+
     // Manajemen Akun Panitia oleh EO
     Route::post('/panitia/store', [PanitiaController::class, 'store'])->name('panitia.store');
     Route::delete('/panitia/{id}', [PanitiaController::class, 'destroy'])->name('panitia.destroy');
@@ -74,6 +80,11 @@ Route::group([], function () {
 Route::middleware(['guest'])->group(function () {
     Route::get('/login-panitia', [PanitiaAuthController::class, 'login'])->name('panitia.login');
     Route::post('/login-panitia', [PanitiaAuthController::class, 'authenticate'])->name('panitia.login.authenticate');
+});
+
+Route::middleware(['auth'])->prefix('panitia')->name('panitia.')->group(function () {
+    Route::get('/scan', [PanitiaScanController::class, 'index'])->name('scan.index');
+    Route::post('panitia/scan/process', [PanitiaScanController::class, 'processScan'])->name('scan.process');
 });
 
 Route::group([], function () {

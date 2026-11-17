@@ -196,69 +196,46 @@ class PaymentController extends Controller
         $orderCode = $notif->order_id;
 
         $order = DB::table('orders')->where('order_code', $orderCode)->first();
-        if ($transactionStatus == 'settlement' || $transactionStatus == 'capture') {
-            if ($order->status !== 'paid') {
-                DB::transaction(function () use ($order) {
-                    DB::table('orders')->where('id', $order->id)->update([
-                        'status' => 'paid',
-                        'updated_at' => now(),
-                    ]);
-
-                    DB::table('payments')->updateOrInsert(
-                        ['order_id' => $order->id],
-                        [
-                            'payment_gateway' => 'midtrans',
-                            'payment_method'  => 'snap',
-                            'amount'          => $order->grand_total,
-                            'status'          => 'paid',
-                            'created_at'      => now(),
-                            'updated_at'      => now(),
-                        ]
-                    );
-
-                    $items = DB::table('order_items')->where('order_id', $order->id)->get();
-                    foreach ($items as $item) {
-                        DB::table('ticket_types')
-                            ->where('id', $item->ticket_type_id)
-                            ->decrement('reserved_quota', $item->quantity);
-
-                        DB::table('ticket_types')
-                            ->where('id', $item->ticket_type_id)
-                            ->increment('sold_quota', $item->quantity);
-                    }
-                });
-            }
-
-            // Lanjutkan kirim email tiket...
-        } else if (in_array($transactionStatus, ['expire', 'deny', 'cancel'])) {
-            if ($order->status === 'pending') {
-                DB::transaction(function () use ($order) {
-                    DB::table('orders')->where('id', $order->id)->update([
-                        'status' => 'cancelled',
-                        'updated_at' => now(),
-                    ]);
-
-                    DB::table('payments')->updateOrInsert(
-                        ['order_id' => $order->id],
-                        [
-                            'payment_gateway' => 'midtrans',
-                            'payment_method'  => 'snap',
-                            'amount'          => $order->grand_total,
-                            'status'          => 'failed',
-                            'created_at'      => now(),
-                            'updated_at'      => now(),
-                        ]
-                    );
-
-                    $items = DB::table('order_items')->where('order_id', $order->id)->get();
-                    foreach ($items as $item) {
-                        DB::table('ticket_types')
-                            ->where('id', $item->ticket_type_id)
-                            ->decrement('reserved_quota', $item->quantity);
-                    }
-                });
-            }
+        if (!$order) {
+            return response()->json(['message' => 'Order tidak ditemukan'], 404);
         }
+
+        if ($transactionStatus == 'settlement' || $transactionStatus == 'capture') {
+            // --- KIRIM EMAIL OTOMATIS KETIKA PEMBAYARAN BERHASIL ---
+            try {
+                $orderComplete = DB::table('orders')
+                    ->join('events', 'orders.event_id', '=', 'events.id')
+                    ->select('orders.*', 'events.title as event_title', 'events.start_time', 'events.venue_name')
+                    ->where('orders.id', $order->id)
+                    ->first();
+
+                if ($orderComplete && $orderComplete->customer_email) {
+                    Mail::to($orderComplete->customer_email)->send(new SendTicketEmail($orderComplete, null));
+                }
+            } catch (\Exception $e) {
+                Log::error('Gagal mengirim email tiket: ' . $e->getMessage());
+            }
+        } else if (in_array($transactionStatus, ['expire', 'deny', 'cancel'])) {
+            DB::transaction(function () use ($order) {
+                DB::table('orders')->where('id', $order->id)->update(['status' => 'cancelled', 'updated_at' => now()]);
+                DB::table('payments')->where('order_id', $order->id)->update(['status' => 'failed', 'updated_at' => now()]);
+
+                // Kembalikan kuota jika transaksi batal
+                $items = DB::table('order_items')->where('order_id', $order->id)->get();
+                foreach ($items as $item) {
+                    DB::table('ticket_types')
+                        ->where('id', $item->ticket_type_id)
+                        ->decrement('reserved_quota', $item['quantity'] ?? $item->quantity);
+
+                    // Kurangi sold_quota jika sebelumnya sudah terhitung
+                    DB::table('ticket_types')
+                        ->where('id', $item->ticket_type_id)
+                        ->decrement('sold_quota', $item->quantity);
+                }
+            });
+        }
+
+        return response()->json(['message' => 'Callback diproses successfully']);
     }
 
 
