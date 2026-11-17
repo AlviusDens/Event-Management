@@ -201,6 +201,18 @@ class PaymentController extends Controller
         }
 
         if ($transactionStatus == 'settlement' || $transactionStatus == 'capture') {
+            DB::transaction(function () use ($order) {
+                // Update status order dan payment menjadi paid
+                DB::table('orders')->where('id', $order->id)->update([
+                    'status'     => 'paid',
+                    'updated_at' => now(),
+                ]);
+
+                DB::table('payments')->where('order_id', $order->id)->update([
+                    'status'     => 'paid',
+                    'updated_at' => now(),
+                ]);
+            });
             // --- KIRIM EMAIL OTOMATIS KETIKA PEMBAYARAN BERHASIL ---
             try {
                 $orderComplete = DB::table('orders')
@@ -249,6 +261,22 @@ class PaymentController extends Controller
 
         if (!$order) {
             abort(404, 'Tiket tidak ditemukan.');
+        }
+
+        if ($order->status === 'pending') {
+            Config::$serverKey = config('midtrans.server_key');
+            Config::$isProduction = config('midtrans.is_production');
+
+            try {
+                $status = \Midtrans\Transaction::status($orderCode);
+                if (in_array($status->transaction_status, ['settlement', 'capture'])) {
+                    DB::table('orders')->where('id', $order->id)->update(['status' => 'paid', 'updated_at' => now()]);
+                    DB::table('payments')->where('order_id', $order->id)->update(['status' => 'paid', 'updated_at' => now()]);
+                    $order->status = 'paid'; // Update objek untuk tampilan view saat ini
+                }
+            } catch (\Exception $e) {
+                Log::warning('Gagal cek status Midtrans: ' . $e->getMessage());
+            }
         }
 
         $items = DB::table('order_items')
