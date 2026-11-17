@@ -269,10 +269,11 @@ class PaymentController extends Controller
 
             try {
                 $status = \Midtrans\Transaction::status($orderCode);
-                if (in_array($status->transaction_status, ['settlement', 'capture'])) {
+                $transactionStatus = data_get($status, 'transaction_status');
+                if (in_array($transactionStatus, ['settlement', 'capture'])) {
                     DB::table('orders')->where('id', $order->id)->update(['status' => 'paid', 'updated_at' => now()]);
                     DB::table('payments')->where('order_id', $order->id)->update(['status' => 'paid', 'updated_at' => now()]);
-                    $order->status = 'paid'; // Update objek untuk tampilan view saat ini
+                    $order->status = 'paid';
                 }
             } catch (\Exception $e) {
                 Log::warning('Gagal cek status Midtrans: ' . $e->getMessage());
